@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: wayfin-compass-actions
+    runtime: python
+    rootDir: mock-api
+    plan: free
+    buildCommand: pip install fastapi "uvicorn" "pydantic[email]"
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT

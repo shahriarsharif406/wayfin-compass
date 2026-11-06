@@ -1,0 +1,592 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Wayfin Compass Actions API",
+    "description": "Demo actions for the Wayfin Compass support agent.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/disputes": {
+      "post": {
+        "summary": "Open Dispute",
+        "operationId": "open_dispute_disputes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisputeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisputeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flight-claims": {
+      "post": {
+        "summary": "File Flight Claim",
+        "operationId": "file_flight_claim_flight_claims_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlightClaimIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlightClaimOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/replacement-cards": {
+      "post": {
+        "summary": "Order Replacement",
+        "operationId": "order_replacement_replacement_cards_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplacementIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplacementOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/handoff-tickets": {
+      "post": {
+        "summary": "Create Handoff",
+        "operationId": "create_handoff_handoff_tickets_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HandoffIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandoffOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases/{case_id}": {
+      "get": {
+        "summary": "Get Case",
+        "operationId": "get_case_cases__case_id__get",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Case Cases  Case Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DisputeIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "dispute_type": {
+            "$ref": "#/components/schemas/DisputeType"
+          },
+          "merchant": {
+            "type": "string",
+            "title": "Merchant"
+          },
+          "amount": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Amount"
+          },
+          "currency": {
+            "type": "string",
+            "maxLength": 3,
+            "minLength": 3,
+            "title": "Currency",
+            "description": "ISO code, e.g. USD"
+          },
+          "statement_within_60_days": {
+            "type": "boolean",
+            "title": "Statement Within 60 Days",
+            "default": true
+          },
+          "card_last4": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Card Last4"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "dispute_type",
+          "merchant",
+          "amount",
+          "currency"
+        ],
+        "title": "DisputeIn"
+      },
+      "DisputeOut": {
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "expected_resolution_days": {
+            "type": "integer",
+            "title": "Expected Resolution Days"
+          },
+          "provisional_credit_eligible": {
+            "type": "boolean",
+            "title": "Provisional Credit Eligible"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case_id",
+          "status",
+          "expected_resolution_days",
+          "provisional_credit_eligible",
+          "message"
+        ],
+        "title": "DisputeOut"
+      },
+      "DisputeType": {
+        "type": "string",
+        "enum": [
+          "unauthorized",
+          "duplicate",
+          "not_received",
+          "not_as_described",
+          "wrong_amount",
+          "cancelled_subscription"
+        ],
+        "title": "DisputeType"
+      },
+      "FlightClaimIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "issue": {
+            "$ref": "#/components/schemas/FlightIssue"
+          },
+          "airline": {
+            "type": "string",
+            "title": "Airline"
+          },
+          "flight_number": {
+            "type": "string",
+            "title": "Flight Number"
+          },
+          "flight_date": {
+            "type": "string",
+            "title": "Flight Date",
+            "description": "YYYY-MM-DD"
+          },
+          "expenses_amount": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Expenses Amount",
+            "description": "USD"
+          },
+          "delay_hours": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delay Hours"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "issue",
+          "airline",
+          "flight_number",
+          "flight_date",
+          "expenses_amount"
+        ],
+        "title": "FlightClaimIn"
+      },
+      "FlightClaimOut": {
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "claim_deadline_days": {
+            "type": "integer",
+            "title": "Claim Deadline Days"
+          },
+          "documents_needed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Documents Needed"
+          },
+          "max_cover_usd": {
+            "type": "number",
+            "title": "Max Cover Usd"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case_id",
+          "status",
+          "claim_deadline_days",
+          "documents_needed",
+          "max_cover_usd",
+          "message"
+        ],
+        "title": "FlightClaimOut"
+      },
+      "FlightIssue": {
+        "type": "string",
+        "enum": [
+          "delay",
+          "cancellation",
+          "baggage"
+        ],
+        "title": "FlightIssue"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HandoffIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "issue_type": {
+            "type": "string",
+            "title": "Issue Type"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "preferred_contact": {
+            "type": "string",
+            "title": "Preferred Contact",
+            "description": "phone, email, or callback"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "issue_type",
+          "summary",
+          "preferred_contact"
+        ],
+        "title": "HandoffIn"
+      },
+      "HandoffOut": {
+        "properties": {
+          "ticket_id": {
+            "type": "string",
+            "title": "Ticket Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticket_id",
+          "status"
+        ],
+        "title": "HandoffOut"
+      },
+      "ReplacementIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "express": {
+            "type": "boolean",
+            "title": "Express",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "title": "ReplacementIn"
+      },
+      "ReplacementOut": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "delivery_business_days": {
+            "type": "string",
+            "title": "Delivery Business Days"
+          },
+          "fee_usd": {
+            "type": "number",
+            "title": "Fee Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "delivery_business_days",
+          "fee_usd"
+        ],
+        "title": "ReplacementOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
