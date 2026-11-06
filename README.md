@@ -5,40 +5,47 @@
 Wayfin is a fictional travel-card company. Compass is its support assistant.
 
 ## What makes it different
-Most hackathon bots answer FAQs. Compass is built around **guided workflows that end in a real action**:
+Most hackathon bots answer FAQs. Compass is built around **guided workflows that end in a real action**, with the safeguards and metrics a real support team needs.
 
-| Feature | What it does |
+| Area | Feature |
 |---|---|
-| Knowledge-based agent | Answers only from Wayfin's own content, and says so when it does not know |
-| Pre-chat form | Captures the issue and a reply style before the chat starts |
-| Simple & short mode | Short sentences and small steps for people who struggle with dense text |
-| Dispute Navigator | Finds the dispute type, checks the 60-day window, lists the evidence, opens a case |
-| Flight Disruption Check | Shows card travel cover and general airline-rights information, then files a claim |
+| Knowledge | Answers only from Wayfin's own content and says so when it does not know |
+| Pre-chat | Issue type, **urgency**, reply style, and an **AI disclosure and consent** checkbox |
+| Accessibility | **Simple & short mode**: short sentences, small steps, no jargon |
+| Dispute Navigator | Finds the type, lists the exact evidence, checks the 60-day window, opens a case |
+| Flight Disruption Check | Card travel cover plus general airline-rights information, then files a claim |
 | Urgent Card Safety | Freeze first, paperwork second |
-| Human handoff | Phone, email, or callback, with a summary so customers never repeat themselves |
-| Real actions | A small API creates case numbers (WF-D, WF-F, WF-R, WF-H) |
+| Case Status | Customers check progress, timeline, and next steps themselves |
+| Priority handoff | P1/P2/P3 routing with response targets; phone, email, or callback; summary travels with the customer |
+| Feedback | One-tap CSAT and "solved without a person" signal |
+| Safety | Refuses full card numbers, resists prompt injection, honest about limits |
+| Modern API | Idempotency keys, optional API-key auth, strict validation, confirmation-email previews |
+| Business view | Live `/dashboard` with self-service rate, CSAT, and agent time saved |
 
 ## Repo map
 ```
 knowledge/      Content to train the agent (5 files, all fictional policy)
-agent-config/   Pre-chat form, intents, workflows, actions, persona
-mock-api/       FastAPI service the agent calls for actions (tested)
+agent-config/   Pre-chat form, intents, 6 workflows, actions, persona
+mock-api/       FastAPI actions service with dashboard (20 automated tests)
+docs/           Architecture diagram, security and responsible AI, business case
 testing/        Full test plan for every workflow path
 submission/     150-word description, demo video script, Devpost checklist
 SETUP-GUIDE.md  Step-by-step plan to build and publish in eGain
+.github/        CI that runs the API tests on every push
 ```
 
 ## Run the actions API locally
 ```bash
 cd mock-api
 pip install -r requirements.txt
-pytest
-uvicorn app:app --reload   # docs at http://127.0.0.1:8000/docs
+pytest -q                  # 20 tests
+uvicorn app:app --reload   # docs: /docs   dashboard: /dashboard   metrics: /metrics
 ```
 
 ## Notes
 - Everything about Wayfin is invented for demonstration. Contact details use reserved example domains and numbers.
-- Airline-rights text is a simplified general summary, not legal advice.
+- Airline-rights text is a simplified general summary, not legal advice. Verify against official sources.
+- Business-case numbers are illustrative assumptions, not measured results.
 - No real customer or card data is used or stored.
 
 ## License

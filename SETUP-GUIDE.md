@@ -17,7 +17,7 @@
 Create the form from `agent-config/01-pre-chat-form.md`. Map the "reply style" answer so it can steer responses.
 
 ## Step 4: Workflows (60 to 90 min)
-Build Workflows A to D from `agent-config/03-workflows.md`. Attach each to its workflow intent. Keep button labels exactly as written so testing is easy.
+Build Workflows A to F and the global rules from `agent-config/03-workflows.md`. If time is short, build A, D, and F first, then B, C, and E. Attach each to its workflow intent. Keep button labels exactly as written so testing is easy.
 
 ## Step 5: Deploy the actions API (20 min)
 Option 1: Render (free)
@@ -25,6 +25,15 @@ Option 1: Render (free)
 2. In Render, create a **Web Service** from the repo. It reads `mock-api/render.yaml`.
 3. Open `https://YOUR-SERVICE.onrender.com/docs` to confirm the API is live.
 4. Free instances sleep when idle, so open `/health` a minute before recording or judging.
+5. (Recommended) In Render's Environment settings add `WAYFIN_API_KEY` with a long random value, then add the header `X-API-Key` with the same value in the eGain action settings. Do not commit the key to GitHub.
+6. Open `/dashboard` to see the live business metrics page. It is useful as a screenshot for Devpost.
+
+Option 3: Docker
+```bash
+cd mock-api
+docker build -t wayfin-compass-api .
+docker run -p 8000:8000 -e WAYFIN_API_KEY=change-me wayfin-compass-api
+```
 
 Option 2: Run locally for development
 ```bash
@@ -35,7 +44,7 @@ pytest
 ```
 
 ## Step 6: Register actions (30 min)
-In eGain, enable **Actions** and add the five endpoints from `agent-config/04-actions.md`, using `mock-api/openapi.json` for field names. Connect each action to the matching workflow step.
+In eGain, enable **Actions** and add the seven endpoints from `agent-config/04-actions.md`, using `mock-api/openapi.json` for field names. Connect each action to the matching workflow step.
 
 ## Step 7: Escalation (10 min)
 Add Phone, Email, and Callback options using `knowledge/05-contact-and-escalation.md`. Include the handoff summary.

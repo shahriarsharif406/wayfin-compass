@@ -8,7 +8,10 @@
 - [ ] Knowledge uploaded (all five files in `knowledge/`)
 - [ ] Intents reviewed and merged (`agent-config/02-intents.md`)
 - [ ] Pre-chat form created (`01-pre-chat-form.md`)
-- [ ] Four workflows built (`03-workflows.md`)
+- [ ] Workflows A to F and global rules built (`03-workflows.md`)
+- [ ] Consent checkbox and urgency question in the pre-chat form
+- [ ] Actions API deployed, API key set, `/dashboard` opens
+- [ ] Screenshot of `/dashboard` and the architecture diagram saved for the Devpost gallery
 - [ ] Actions registered and pointing to the deployed API (`04-actions.md`)
 - [ ] Escalation with at least two contact options
 - [ ] Agent personalized and **published**

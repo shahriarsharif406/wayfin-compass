@@ -2,23 +2,113 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Wayfin Compass Actions API",
-    "description": "Demo actions for the Wayfin Compass support agent.",
-    "version": "1.0.0"
+    "description": "Actions for the Wayfin Compass support agent (demo).",
+    "version": "2.0.0"
   },
   "paths": {
+    "/evidence-checklist/{dispute_type}": {
+      "get": {
+        "summary": "Evidence Checklist",
+        "operationId": "evidence_checklist_evidence_checklist__dispute_type__get",
+        "parameters": [
+          {
+            "name": "dispute_type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DisputeType"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Evidence Checklist Evidence Checklist  Dispute Type  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/disputes": {
       "post": {
         "summary": "Open Dispute",
         "operationId": "open_dispute_disputes_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/DisputeIn"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -48,15 +138,49 @@
       "post": {
         "summary": "File Flight Claim",
         "operationId": "file_flight_claim_flight_claims_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/FlightClaimIn"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -86,15 +210,49 @@
       "post": {
         "summary": "Order Replacement",
         "operationId": "order_replacement_replacement_cards_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ReplacementIn"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -124,15 +282,49 @@
       "post": {
         "summary": "Create Handoff",
         "operationId": "create_handoff_handoff_tickets_post",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/HandoffIn"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -171,6 +363,22 @@
               "type": "string",
               "title": "Case Id"
             }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
           }
         ],
         "responses": {
@@ -192,6 +400,102 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/feedback": {
+      "post": {
+        "summary": "Submit Feedback",
+        "operationId": "submit_feedback_feedback_post",
+        "parameters": [
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Submit Feedback Feedback Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "summary": "Metrics",
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Metrics Metrics Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "summary": "Dashboard",
+        "operationId": "dashboard_dashboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -226,6 +530,8 @@
         "properties": {
           "name": {
             "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
             "title": "Name"
           },
           "email": {
@@ -238,10 +544,13 @@
           },
           "merchant": {
             "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
             "title": "Merchant"
           },
           "amount": {
             "type": "number",
+            "exclusiveMaximum": 1000000.0,
             "exclusiveMinimum": 0.0,
             "title": "Amount"
           },
@@ -268,6 +577,11 @@
               }
             ],
             "title": "Card Last4"
+          },
+          "urgent": {
+            "type": "boolean",
+            "title": "Urgent",
+            "default": false
           }
         },
         "type": "object",
@@ -291,6 +605,10 @@
             "type": "string",
             "title": "Status"
           },
+          "priority": {
+            "type": "string",
+            "title": "Priority"
+          },
           "expected_resolution_days": {
             "type": "integer",
             "title": "Expected Resolution Days"
@@ -299,18 +617,33 @@
             "type": "boolean",
             "title": "Provisional Credit Eligible"
           },
+          "evidence_checklist": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence Checklist"
+          },
           "message": {
             "type": "string",
             "title": "Message"
+          },
+          "confirmation_email": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Confirmation Email"
           }
         },
         "type": "object",
         "required": [
           "case_id",
           "status",
+          "priority",
           "expected_resolution_days",
           "provisional_credit_eligible",
-          "message"
+          "evidence_checklist",
+          "message",
+          "confirmation_email"
         ],
         "title": "DisputeOut"
       },
@@ -326,10 +659,61 @@
         ],
         "title": "DisputeType"
       },
+      "FeedbackIn": {
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Rating"
+          },
+          "case_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Case Id"
+          },
+          "resolved_without_human": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved Without Human"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rating"
+        ],
+        "title": "FeedbackIn"
+      },
       "FlightClaimIn": {
         "properties": {
           "name": {
             "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
             "title": "Name"
           },
           "email": {
@@ -342,10 +726,14 @@
           },
           "airline": {
             "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
             "title": "Airline"
           },
           "flight_number": {
             "type": "string",
+            "maxLength": 12,
+            "minLength": 1,
             "title": "Flight Number"
           },
           "flight_date": {
@@ -355,6 +743,7 @@
           },
           "expenses_amount": {
             "type": "number",
+            "exclusiveMaximum": 1000000.0,
             "minimum": 0.0,
             "title": "Expenses Amount",
             "description": "USD"
@@ -363,6 +752,7 @@
             "anyOf": [
               {
                 "type": "number",
+                "maximum": 240.0,
                 "minimum": 0.0
               },
               {
@@ -370,6 +760,11 @@
               }
             ],
             "title": "Delay Hours"
+          },
+          "urgent": {
+            "type": "boolean",
+            "title": "Urgent",
+            "default": false
           }
         },
         "type": "object",
@@ -394,6 +789,10 @@
             "type": "string",
             "title": "Status"
           },
+          "priority": {
+            "type": "string",
+            "title": "Priority"
+          },
           "claim_deadline_days": {
             "type": "integer",
             "title": "Claim Deadline Days"
@@ -412,16 +811,23 @@
           "message": {
             "type": "string",
             "title": "Message"
+          },
+          "confirmation_email": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Confirmation Email"
           }
         },
         "type": "object",
         "required": [
           "case_id",
           "status",
+          "priority",
           "claim_deadline_days",
           "documents_needed",
           "max_cover_usd",
-          "message"
+          "message",
+          "confirmation_email"
         ],
         "title": "FlightClaimOut"
       },
@@ -451,6 +857,8 @@
         "properties": {
           "name": {
             "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
             "title": "Name"
           },
           "email": {
@@ -460,16 +868,24 @@
           },
           "issue_type": {
             "type": "string",
+            "maxLength": 60,
             "title": "Issue Type"
           },
           "summary": {
             "type": "string",
+            "maxLength": 1500,
+            "minLength": 1,
             "title": "Summary"
           },
           "preferred_contact": {
             "type": "string",
             "title": "Preferred Contact",
             "description": "phone, email, or callback"
+          },
+          "urgent": {
+            "type": "boolean",
+            "title": "Urgent",
+            "default": false
           }
         },
         "type": "object",
@@ -491,12 +907,22 @@
           "status": {
             "type": "string",
             "title": "Status"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority"
+          },
+          "target_response": {
+            "type": "string",
+            "title": "Target Response"
           }
         },
         "type": "object",
         "required": [
           "ticket_id",
-          "status"
+          "status",
+          "priority",
+          "target_response"
         ],
         "title": "HandoffOut"
       },
@@ -504,6 +930,8 @@
         "properties": {
           "name": {
             "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
             "title": "Name"
           },
           "email": {
@@ -537,13 +965,19 @@
           "fee_usd": {
             "type": "number",
             "title": "Fee Usd"
+          },
+          "confirmation_email": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Confirmation Email"
           }
         },
         "type": "object",
         "required": [
           "request_id",
           "delivery_business_days",
-          "fee_usd"
+          "fee_usd",
+          "confirmation_email"
         ],
         "title": "ReplacementOut"
       },

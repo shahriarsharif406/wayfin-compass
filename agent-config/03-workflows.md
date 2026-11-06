@@ -1,6 +1,15 @@
 # Workflows
 
-Four guided flows. Each is tied to a workflow intent (see `02-intents.md`). In every step, use the **Simple & short** wording when the pre-chat style is Simple.
+Six guided flows. Each is tied to a workflow intent (see `02-intents.md`). In every step, use the **Simple & short** wording when the pre-chat style is Simple.
+
+## Global rules (apply in every workflow)
+1. **AI disclosure:** the first message says Compass is an AI assistant and a person is always available.
+2. **Safety first:** if the pre-chat answer "Is this urgent right now?" is Yes, or the customer says stolen, stranded, scam, or hacked, show the phone line and offer Workflow D with priority **before** asking anything else.
+3. **Sensitive data:** never ask for full card numbers, PIN, CVV, or passwords. If the customer types them, do not repeat them, and ask them to share only the last 4 digits.
+4. **Idempotent actions:** every action call includes an `Idempotency-Key` so retries never create duplicate cases.
+5. **Fewer questions:** never ask for something already given in the pre-chat form.
+6. **After every completed workflow:** offer Workflow F (one-tap rating), then "Anything else?".
+7. **Failure rule:** if an action fails, apologise once, show the two contact options, and attach the handoff summary.
 
 ---
 
@@ -160,4 +169,50 @@ ACTION (optional): create_handoff_ticket
  |
  v
 END
+```
+
+---
+
+## Workflow E: Case Status
+
+**Goal:** Let a customer check an existing case in seconds, without calling.
+
+```
+START
+ |
+ v
+Q1. What is your case number? (format WF-D-######, WF-F-######, WF-R-######, WF-H-######)
+   Not sure -> explain it is in the confirmation email; offer Workflow D
+ |
+ v
+ACTION: get_case_status(case_id)
+   Not found -> check the format once; if still not found, offer Workflow D
+ |
+ v
+Show: type, current status, priority, timeline (received date), next steps
+   status = needs_manual_review -> explain a specialist is reviewing; do not promise an outcome
+ |
+ v
+"Would you like to add a document checklist or talk to a person?" -> END or Workflow D
+```
+
+---
+
+## Workflow F: Feedback (CSAT)
+
+**Goal:** Measure satisfaction and AI resolution, and feed the business dashboard.
+
+```
+START
+ |
+ v
+Q1. How was this chat? [1 Poor] [2] [3] [4] [5 Great]
+Q2. Did Compass solve it without needing a person? [Yes | No]
+Q3. (only if rating is 1 to 3) What could be better? (optional free text)
+ |
+ v
+ACTION: submit_feedback
+ |
+ v
+Thank the customer. If rating is 1 or 2, offer Workflow D. END
 ```

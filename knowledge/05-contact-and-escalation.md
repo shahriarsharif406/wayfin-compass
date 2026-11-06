@@ -9,6 +9,13 @@
 | **Email** | support@wayfin.example, reply within 1 business day | Anything with documents or screenshots |
 | **Callback request** | Customer leaves a number and preferred time | When the customer prefers to be called |
 
+## Response times by priority
+| Priority | Used for | Target response |
+|---|---|---|
+| P1 Urgent | Stranded travellers, stolen cards, suspected fraud, customer says it is urgent | Within 15 minutes, by phone |
+| P2 High | Unauthorized charges, replacement cards, upset or distressed customers | Within 2 hours |
+| P3 Standard | Everything else | Within 1 business day |
+
 ## When Compass must hand over to a person
 1. The customer asks for a person at any time.
 2. The question is not covered by the knowledge base (knowledge gap).
