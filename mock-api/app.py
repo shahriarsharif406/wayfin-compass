@@ -402,6 +402,94 @@ def create_handoff(body: HandoffIn,
 # --------------------------------------------------------------------------
 # Case lookup with timeline
 # --------------------------------------------------------------------------
+class DelayReason(str, Enum):
+    none_given = "none_given"
+    weather = "weather"
+    air_traffic_control = "air_traffic_control"
+    external_strike = "external_strike"
+    security_risk = "security_risk"
+    technical_fault = "technical_fault"
+    crew_issue = "crew_issue"
+    other = "other"
+
+
+# Reasons airlines commonly argue are "extraordinary circumstances".
+_MAY_BE_EXEMPT = {
+    DelayReason.weather, DelayReason.air_traffic_control,
+    DelayReason.external_strike, DelayReason.security_risk,
+}
+
+
+class CompensationIn(BaseModel):
+    distance_km: float = Field(gt=0, le=20000)
+    arrival_delay_minutes: int = Field(ge=0, le=5000)
+    cancelled: bool = False
+    cancellation_notice_days: Optional[int] = Field(default=None, ge=0, le=365)
+    covered_route: bool = Field(description="Customer says the flight left an EU/UK airport, or arrived in the EU/UK on an EU/UK airline")
+    intra_eu: bool = False
+    reason: DelayReason = DelayReason.none_given
+
+
+class CompensationOut(BaseModel):
+    verdict: str
+    indicative_amount_eur: float
+    reasons: List[str]
+    disclaimer: str
+
+
+DISCLAIMER = ("Indicative general information about EU/UK261-style rules, not legal advice. "
+              "The airline or a national enforcement body decides each case.")
+
+
+@app.post("/airline-compensation/estimate", response_model=CompensationOut,
+          dependencies=[Depends(require_key)])
+def estimate_airline_compensation(body: CompensationIn) -> CompensationOut:
+    """Deterministic estimate, so the amount never comes from a language model's guess."""
+    why: List[str] = []
+    if not body.covered_route:
+        return CompensationOut(
+            verdict="check_other_rules", indicative_amount_eur=0.0,
+            reasons=["EU/UK rules may not apply to this route. Check the aviation authority of the countries involved."],
+            disclaimer=DISCLAIMER)
+
+    if body.cancelled:
+        notice = body.cancellation_notice_days
+        if notice is not None and notice >= 14:
+            return CompensationOut(
+                verdict="not_eligible", indicative_amount_eur=0.0,
+                reasons=["Cancellations announced 14 or more days ahead usually do not qualify for fixed compensation. Refund or re-routing still applies."],
+                disclaimer=DISCLAIMER)
+        why.append("Cancelled with less than 14 days notice (or notice unknown).")
+    else:
+        if body.arrival_delay_minutes < 180:
+            return CompensationOut(
+                verdict="not_eligible", indicative_amount_eur=0.0,
+                reasons=["Fixed compensation usually needs an arrival delay of 3 hours or more."],
+                disclaimer=DISCLAIMER)
+        why.append("Arrival delay is 3 hours or more.")
+
+    if body.distance_km <= 1500:
+        amount = 250.0
+    elif body.distance_km <= 3500 or body.intra_eu:
+        amount = 400.0
+    else:
+        amount = 600.0
+        if not body.cancelled and body.arrival_delay_minutes < 240:
+            amount = 300.0
+            why.append("Long-haul delay under 4 hours is commonly reduced by half.")
+    why.append(f"Distance band for {body.distance_km:.0f} km gives EUR {amount:.0f}.")
+
+    if body.reason in _MAY_BE_EXEMPT:
+        why.append("The airline may argue extraordinary circumstances; it must prove them.")
+        verdict = "airline_may_be_exempt"
+    else:
+        if body.reason in (DelayReason.technical_fault, DelayReason.crew_issue):
+            why.append("Ordinary technical or crew problems are generally not treated as extraordinary.")
+        verdict = "likely_eligible"
+    return CompensationOut(verdict=verdict, indicative_amount_eur=amount, reasons=why,
+                           disclaimer=DISCLAIMER)
+
+
 @app.get("/cases/{case_id}", dependencies=[Depends(require_key)])
 def get_case(case_id: str) -> dict:
     case = CASES.get(case_id.upper())

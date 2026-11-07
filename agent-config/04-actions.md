@@ -12,6 +12,7 @@ Contract file: `mock-api/openapi.json` (also live at `/docs` and `/openapi.json`
 | `create_handoff_ticket` | `POST /handoff-tickets` | Workflow D | name, email, issue_type, summary, preferred_contact, urgent | `ticket_id` (WF-H-######), `priority` (P1/P2/P3), `target_response` |
 | `get_case_status` | `GET /cases/{case_id}` | Workflow E | case_id | `status`, `priority`, `timeline`, `next_steps` |
 | `get_evidence_checklist` | `GET /evidence-checklist/{dispute_type}` | Workflow A | dispute_type | `documents` |
+| `estimate_airline_compensation` | `POST /airline-compensation/estimate` | Workflow B | distance_km, arrival_delay_minutes, cancelled, cancellation_notice_days, covered_route, intra_eu, reason | `verdict`, `indicative_amount_eur`, `reasons`, `disclaimer` |
 | `submit_feedback` | `POST /feedback` | Workflow F | rating (1 to 5), case_id, resolved_without_human, comment | `ok` |
 
 ## Modern API behaviour to rely on
@@ -21,6 +22,9 @@ Contract file: `mock-api/openapi.json` (also live at `/docs` and `/openapi.json`
 - **Card-number guard:** the API rejects free text that looks like a full card number (13 to 19 digits).
 - **Confirmation email preview:** responses include a preview object. Nothing is sent in the demo; production would hand it to an email service.
 - **Live business metrics:** `GET /metrics` and the page `GET /dashboard` show cases handled, self-service rate, CSAT, and estimated agent time saved.
+
+## Why amounts come from code
+The airline-compensation amount is calculated by a deterministic function, not by the language model. The agent reads the result back to the customer. This keeps euro figures exact and auditable, and the tests in `mock-api/test_app.py` lock the rules in.
 
 ## Design notes
 - The service stores cases in memory (demo only). It never asks for or stores real card numbers.

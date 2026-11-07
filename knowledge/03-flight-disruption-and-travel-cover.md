@@ -31,7 +31,9 @@ These can apply when:
 **Compensation** may be owed when the flight arrives **3 hours or more late**, or is cancelled with less than 14 days' notice, **unless** the airline shows "extraordinary circumstances" (for example, severe weather, air-traffic control strikes, or security risks). Typical fixed amounts depend on distance:
 - up to 1,500 km: EUR 250
 - 1,500 km to 3,500 km (or longer flights within the EU): EUR 400
-- over 3,500 km: EUR 600
+- over 3,500 km: EUR 600 (commonly reduced to EUR 300 when the delay at arrival is under 4 hours)
+
+**Common airline arguments:** Bad weather, air-traffic-control restrictions, and external strikes are often treated as extraordinary circumstances, and the airline must show they apply. Ordinary technical faults and crew shortages are generally not treated as extraordinary. Time limits for making a claim differ by country, so customers should claim promptly.
 
 The airline must also provide **care** during long delays (meals, refreshments, communication, and hotel when needed) and offer a **refund or re-routing** when a flight is cancelled.
 

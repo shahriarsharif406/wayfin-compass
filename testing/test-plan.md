@@ -92,9 +92,12 @@ Mark each row in both columns. Fix and re-test anything that fails.
 | I5 | Open `/dashboard` after tests | Counts, CSAT, and minutes saved updated | [ ] | [ ] |
 
 ## API tests (automated)
-Run `cd mock-api && pytest -q`. Expect 20 passing tests.
+Run `cd mock-api && pytest -q`. Expect 24 passing tests.
 
 ## Sign-off
 - [ ] All rows pass in Test AI Agent
 - [ ] All rows pass on the published demo link (waited 5 minutes after the last publish)
 - [ ] Demo link opens in a private browser window
+
+## Accuracy check with the golden set
+Ask every question in `eval/golden_questions.yaml` in Test AI Agent, paste the answers into `answers.csv` (columns `id,answer`), then run `python eval/score_answers.py answers.csv`. Aim for 17/17 before recording the video.

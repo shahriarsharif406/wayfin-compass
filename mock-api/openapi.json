@@ -350,6 +350,63 @@
         }
       }
     },
+    "/airline-compensation/estimate": {
+      "post": {
+        "summary": "Estimate Airline Compensation",
+        "description": "Deterministic estimate, so the amount never comes from a language model's guess.",
+        "operationId": "estimate_airline_compensation_airline_compensation_estimate_post",
+        "parameters": [
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompensationIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompensationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/cases/{case_id}": {
       "get": {
         "summary": "Get Case",
@@ -526,6 +583,106 @@
   },
   "components": {
     "schemas": {
+      "CompensationIn": {
+        "properties": {
+          "distance_km": {
+            "type": "number",
+            "maximum": 20000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Distance Km"
+          },
+          "arrival_delay_minutes": {
+            "type": "integer",
+            "maximum": 5000.0,
+            "minimum": 0.0,
+            "title": "Arrival Delay Minutes"
+          },
+          "cancelled": {
+            "type": "boolean",
+            "title": "Cancelled",
+            "default": false
+          },
+          "cancellation_notice_days": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancellation Notice Days"
+          },
+          "covered_route": {
+            "type": "boolean",
+            "title": "Covered Route",
+            "description": "Customer says the flight left an EU/UK airport, or arrived in the EU/UK on an EU/UK airline"
+          },
+          "intra_eu": {
+            "type": "boolean",
+            "title": "Intra Eu",
+            "default": false
+          },
+          "reason": {
+            "$ref": "#/components/schemas/DelayReason",
+            "default": "none_given"
+          }
+        },
+        "type": "object",
+        "required": [
+          "distance_km",
+          "arrival_delay_minutes",
+          "covered_route"
+        ],
+        "title": "CompensationIn"
+      },
+      "CompensationOut": {
+        "properties": {
+          "verdict": {
+            "type": "string",
+            "title": "Verdict"
+          },
+          "indicative_amount_eur": {
+            "type": "number",
+            "title": "Indicative Amount Eur"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "verdict",
+          "indicative_amount_eur",
+          "reasons",
+          "disclaimer"
+        ],
+        "title": "CompensationOut"
+      },
+      "DelayReason": {
+        "type": "string",
+        "enum": [
+          "none_given",
+          "weather",
+          "air_traffic_control",
+          "external_strike",
+          "security_risk",
+          "technical_fault",
+          "crew_issue",
+          "other"
+        ],
+        "title": "DelayReason"
+      },
       "DisputeIn": {
         "properties": {
           "name": {

@@ -146,3 +146,31 @@ def test_api_key_enforced_when_set(monkeypatch):
     ok = client.get("/cases/WF-D-000000", headers={"X-API-Key": "secret"})
     assert ok.status_code == 404  # authorized, then not found
     monkeypatch.delenv("WAYFIN_API_KEY")
+
+
+def comp(**over):
+    body = {"distance_km": 1000, "arrival_delay_minutes": 200, "covered_route": True}
+    body.update(over)
+    return client.post("/airline-compensation/estimate", json=body).json()
+
+
+def test_compensation_bands():
+    assert comp(distance_km=1200)["indicative_amount_eur"] == 250
+    assert comp(distance_km=2500)["indicative_amount_eur"] == 400
+    assert comp(distance_km=5000, arrival_delay_minutes=300)["indicative_amount_eur"] == 600
+    assert comp(distance_km=5000, arrival_delay_minutes=200)["indicative_amount_eur"] == 300
+
+
+def test_compensation_delay_threshold_and_route():
+    assert comp(arrival_delay_minutes=120)["verdict"] == "not_eligible"
+    assert comp(covered_route=False)["verdict"] == "check_other_rules"
+
+
+def test_compensation_cancellation_notice():
+    assert comp(cancelled=True, cancellation_notice_days=20)["verdict"] == "not_eligible"
+    assert comp(cancelled=True, cancellation_notice_days=3)["verdict"] == "likely_eligible"
+
+
+def test_compensation_extraordinary_reasons():
+    assert comp(reason="weather")["verdict"] == "airline_may_be_exempt"
+    assert comp(reason="technical_fault")["verdict"] == "likely_eligible"

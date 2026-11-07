@@ -96,6 +96,11 @@ Q3. How long was the delay (at arrival, if known)? [Under 3h | 3 to 4h | 4 to 6h
 Q4. Where did the flight depart and arrive? [EU/UK involved | US involved | Elsewhere]
  |
  v
+If the route is EU/UK related: ACTION estimate_airline_compensation
+   (distance band, delay, cancellation notice, reason). Read the verdict and amount back exactly;
+   never calculate the amount yourself. Ask the customer for the airline's stated reason if known.
+ |
+ v
 RESULT SCREEN (built from knowledge/03)
    Wayfin cover:
      Delay >= 4h      -> meals up to USD 75/day (receipts)

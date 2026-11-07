@@ -13,6 +13,9 @@
 4. Let eGain generate intents, then **review them** against `agent-config/02-intents.md`. Rename, merge, and add example phrases.
 5. Use *Test AI Agent* to ask questions from section A of `testing/test-plan.md`.
 
+### Optional accelerator: eGain's official MCP server
+If your eGain tenant has AI Services enabled and a client app with the read permissions, the open-source [eGain MCP server](https://github.com/eGain/egain-mcp-server) (MIT) lets Claude search your portal and call `get-best-answer`. You can use it to ask the questions in `eval/golden_questions.yaml` quickly and score them with `python eval/score_answers.py answers.csv`. It also has optional authoring tools (off by default) for creating articles. Never paste access tokens into chats or commit them to GitHub. Skip this if your hackathon access does not include API credentials.
+
 ## Step 3: Pre-chat (10 min)
 Create the form from `agent-config/01-pre-chat-form.md`. Map the "reply style" answer so it can steer responses.
 

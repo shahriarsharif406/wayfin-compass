@@ -27,5 +27,5 @@ flowchart LR
 | Knowledge base | Source of truth for answers | `knowledge/` |
 | Agent configuration | Intents, workflows, pre-chat, persona | `agent-config/` |
 | Actions API | Creates cases, tracks status, collects feedback, reports metrics | `mock-api/` |
-| Tests | 20 automated API tests and a manual agent test plan | `mock-api/test_app.py`, `testing/` |
+| Tests | 24 automated API tests and a manual agent test plan | `mock-api/test_app.py`, `testing/` |
 | CI | Runs tests on every push | `.github/workflows/ci.yml` |

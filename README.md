@@ -19,6 +19,7 @@ Most hackathon bots answer FAQs. Compass is built around **guided workflows that
 | Priority handoff | P1/P2/P3 routing with response targets; phone, email, or callback; summary travels with the customer |
 | Feedback | One-tap CSAT and "solved without a person" signal |
 | Safety | Refuses full card numbers, resists prompt injection, honest about limits |
+| Exact amounts | Airline compensation is calculated by tested code, never guessed by the model |
 | Modern API | Idempotency keys, optional API-key auth, strict validation, confirmation-email previews |
 | Business view | Live `/dashboard` with self-service rate, CSAT, and agent time saved |
 
@@ -26,8 +27,9 @@ Most hackathon bots answer FAQs. Compass is built around **guided workflows that
 ```
 knowledge/      Content to train the agent (5 files, all fictional policy)
 agent-config/   Pre-chat form, intents, 6 workflows, actions, persona
-mock-api/       FastAPI actions service with dashboard (20 automated tests)
-docs/           Architecture diagram, security and responsible AI, business case
+mock-api/       FastAPI actions service with dashboard (24 automated tests)
+docs/           Architecture, security and responsible AI, business case, related open-source work
+eval/           Golden question set and answer scorer
 testing/        Full test plan for every workflow path
 submission/     150-word description, demo video script, Devpost checklist
 SETUP-GUIDE.md  Step-by-step plan to build and publish in eGain
@@ -38,7 +40,7 @@ SETUP-GUIDE.md  Step-by-step plan to build and publish in eGain
 ```bash
 cd mock-api
 pip install -r requirements.txt
-pytest -q                  # 20 tests
+pytest -q                  # 24 tests
 uvicorn app:app --reload   # docs: /docs   dashboard: /dashboard   metrics: /metrics
 ```
 
