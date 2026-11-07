@@ -2,13 +2,25 @@
 
 > This guide was written without access to the eGain console, so menu names may differ slightly. Use the hackathon's Resources tab and eGain's own tutorial for exact clicks. The content in this repo is what you paste or upload.
 
+## Step 0: Official eGain facts (confirmed from eGain's hackathon page)
+- Participation is described as **limited and first-come, first-served**, so sign up early.
+- Official hackathon page: https://www.egain.com/ai-agent-hackathon/
+- **Submit here as well:** https://www.egain.com/ai-agent-hackathon-project-submission/ (also submit on Devpost).
+- Hands-on lab: https://share.articulate.com/daJ5S2RJxBQWPP_ijlVud
+- Challenge Discord: https://discord.gg/J7t4nk3QK
+- Judging is out of **125 points**: customer and business value 25, functionality and reliability 25, effective use of eGain 20, creativity and customer experience 15, **action and good judgment 25**, **demo video and storytelling 15**. Ties are broken by functionality, then video, then business value.
+- Each person may join only **one** submission. Teams of up to 3.
+- Use only authorized content with no real personal data. Disclose templates, code, and third-party assets. Generative AI tools are allowed.
+
 ## Step 1: Get access (10 min)
 1. On Devpost, click **Join hackathon**.
-2. Open the **Resources** tab and follow the eGain sign-up or tutorial link.
+2. Create a free trial account at https://www.egain.com/try-ai-agent/ (AI Agent for Customer Self-Service) with a working email. Reported limits: 5 AI agents, 10M characters per agent, content from PDF, Word, or HTML files, websites, or a knowledge portal, escalation by SMS, email, or phone.
+3. Do the hands-on lab above once to learn the screens.
+4. eGain's help pages: Create AI Agent, Configure Data Source, Test AI Agent, Personalize, Configure Workflows, Enable Actions, Create External Credentials, all under https://help.egain.com/help/ai_agent_css/welcome.htm
 
 ## Step 2: Knowledge-based agent (30 min)
 1. Create a new AI Agent named **Wayfin Compass**.
-2. Add the five files in `knowledge/` as the knowledge source (upload, or paste each as an article).
+2. Upload the five Word files in `knowledge/upload-ready/` as the data source (eGain accepts PDF, Word, and HTML, not Markdown).
 3. Set the agent language to **English** to match the content.
 4. Let eGain generate intents, then **review them** against `agent-config/02-intents.md`. Rename, merge, and add example phrases.
 5. Use *Test AI Agent* to ask questions from section A of `testing/test-plan.md`.
@@ -47,7 +59,7 @@ pytest
 ```
 
 ## Step 6: Register actions (30 min)
-In eGain, enable **Actions** and add the seven endpoints from `agent-config/04-actions.md`, using `mock-api/openapi.json` for field names. Connect each action to the matching workflow step.
+In eGain, enable **Actions** (help page "Enable Actions"), store the API key under **External Credentials** (help page "Create External Credentials"), and add the seven endpoints from `agent-config/04-actions.md`, using `mock-api/openapi.json` for field names. Connect each action to the matching workflow step.
 
 ## Step 7: Escalation (10 min)
 Add Phone, Email, and Callback options using `knowledge/05-contact-and-escalation.md`. Include the handoff summary.

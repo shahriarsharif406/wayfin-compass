@@ -2,6 +2,20 @@
 
 **Deadline:** The Devpost page shows conflicting dates (Nov 12 at 11:30 PM EST, Nov 15 at 11:59 PM PST, and your header says Nov 13, 10:30 am GMT+6). Treat the earliest as real: **submit by the evening of Nov 12 Bangladesh time at the latest**, and ask in the Discussions tab to confirm.
 
+## Where to submit
+- Devpost project page, **and** eGain's own form: https://www.egain.com/ai-agent-hackathon-project-submission/
+- eGain's page says the deadline is Nov 15, 11:59 PM PST; Devpost says Nov 12, 11:30 PM EST. Use the earlier one.
+
+## What the 125 points reward
+| Criterion | Points | How Compass answers it |
+|---|---|---|
+| Customer and business value | 25 | Disputes and travel claims, `/dashboard`, `docs/business-case.md` |
+| Functionality and reliability | 25 | Full test plan, 24 API tests, golden question set |
+| Effective use of eGain | 20 | Knowledge, pre-chat, 6 workflows, actions, escalation, personalization |
+| Creativity and customer experience | 15 | Simple & short mode, urgency routing |
+| Action and good judgment | 25 | Real case actions; refuses card numbers; honest handoff; amounts from code |
+| Demo video and storytelling | 15 | Follow `demo-video-script.md`; show a real problem and a calm resolution |
+
 ## Before submitting
 - [ ] Joined the hackathon on Devpost (Join hackathon button)
 - [ ] Got eGain access through the Resources tab
