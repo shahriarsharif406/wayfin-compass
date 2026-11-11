@@ -490,6 +490,190 @@ def estimate_airline_compensation(body: CompensationIn) -> CompensationOut:
                            disclaimer=DISCLAIMER)
 
 
+# --------------------------------------------------------------------------
+# Space evidence: satellite-derived context for "extraordinary circumstances"
+# --------------------------------------------------------------------------
+# Read-only context from two free public sources (no API key):
+#   * NASA EONET: satellite-observed natural events (storms, volcanoes, wildfires, floods, dust)
+#   * NOAA SWPC: planetary K-index (geomagnetic storms that can degrade HF radio / GNSS)
+# It never changes an estimate or a verdict. It only gives the customer and the human
+# agent extra evidence. If a source is down, the answer says so and the rest keeps working.
+import math  # noqa: E402
+
+import httpx  # noqa: E402
+
+EONET_URL = "https://eonet.gsfc.nasa.gov/api/v3/events"
+KP_URL = "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json"
+
+# (lat, lon) for common airports. Unknown codes are rejected with a clear message.
+AIRPORTS: Dict[str, tuple] = {
+    "LHR": (51.47, -0.45), "CDG": (49.01, 2.55), "FRA": (50.04, 8.56), "AMS": (52.31, 4.76),
+    "MAD": (40.49, -3.57), "BCN": (41.30, 2.08), "FCO": (41.80, 12.25), "MXP": (45.63, 8.72),
+    "ZRH": (47.46, 8.55), "VIE": (48.11, 16.57), "CPH": (55.62, 12.65), "ARN": (59.65, 17.92),
+    "OSL": (60.19, 11.10), "HEL": (60.32, 24.96), "DUB": (53.43, -6.27), "LIS": (38.77, -9.13),
+    "ATH": (37.94, 23.94), "IST": (41.26, 28.74), "KEF": (63.99, -22.62), "CTA": (37.47, 15.07),
+    "JFK": (40.64, -73.78), "EWR": (40.69, -74.17), "LAX": (33.94, -118.41), "SFO": (37.62, -122.38),
+    "ORD": (41.98, -87.90), "MIA": (25.79, -80.29), "ATL": (33.64, -84.43), "DFW": (32.90, -97.04),
+    "SEA": (47.45, -122.31), "YYZ": (43.68, -79.63), "MEX": (19.44, -99.07), "GRU": (-23.43, -46.47),
+    "DXB": (25.25, 55.36), "DOH": (25.27, 51.61), "DEL": (28.56, 77.10), "BOM": (19.09, 72.87),
+    "DAC": (23.84, 90.40), "CGP": (22.25, 91.81), "SIN": (1.36, 103.99), "BKK": (13.69, 100.75),
+    "HKG": (22.31, 113.91), "NRT": (35.77, 140.39), "ICN": (37.47, 126.45), "SYD": (-33.95, 151.18),
+    "JNB": (-26.14, 28.25), "CAI": (30.12, 31.41), "CMB": (7.18, 79.88),
+}
+
+# category id -> search radius in km around the airport
+_EONET_RADIUS_KM = {"severeStorms": 600, "volcanoes": 800, "wildfires": 100,
+                    "floods": 200, "dustHaze": 500}
+
+
+class SpaceEvidenceIn(BaseModel):
+    departure_airport: str = Field(min_length=3, max_length=3, description="IATA code, e.g. LHR")
+    arrival_airport: str = Field(min_length=3, max_length=3, description="IATA code, e.g. JFK")
+    flight_date: str = Field(description="YYYY-MM-DD", pattern=r"^\d{4}-\d{2}-\d{2}$")
+
+    @field_validator("departure_airport", "arrival_airport")
+    @classmethod
+    def _upper(cls, v: str) -> str:
+        return v.upper()
+
+
+class SpaceSignal(BaseModel):
+    source: str
+    kind: str
+    where: str
+    detail: str
+    distance_km: Optional[int] = None
+
+
+class SpaceEvidenceOut(BaseModel):
+    status: str  # "signals_found" | "no_signals" | "partial" | "unavailable"
+    signals: List[SpaceSignal]
+    summary: str
+    sources_checked: List[str]
+    disclaimer: str
+
+
+SPACE_DISCLAIMER = ("Context from public satellite and space-weather data, not proof. "
+                    "Whether an airline can claim extraordinary circumstances is decided case by case.")
+
+
+def _haversine_km(a: tuple, b: tuple) -> float:
+    la1, lo1, la2, lo2 = map(math.radians, (a[0], a[1], b[0], b[1]))
+    h = math.sin((la2 - la1) / 2) ** 2 + math.cos(la1) * math.cos(la2) * math.sin((lo2 - lo1) / 2) ** 2
+    return 6371.0 * 2 * math.asin(math.sqrt(h))
+
+
+def _http_get_json(url: str, params: Optional[dict] = None):
+    r = httpx.get(url, params=params, timeout=6.0)
+    r.raise_for_status()
+    return r.json()
+
+
+# Overridable in tests so no network is needed.
+FETCH_JSON = _http_get_json
+
+
+def _event_points(event: dict) -> List[tuple]:
+    pts = []
+    for g in event.get("geometry", []):
+        coords = g.get("coordinates")
+        if g.get("type") == "Point" and coords and len(coords) >= 2:
+            pts.append((coords[1], coords[0], g.get("date", "")[:10]))
+    return pts
+
+
+def _eonet_signals(airport: str, date: str) -> List[SpaceSignal]:
+    from datetime import date as _d, timedelta
+    d = _d.fromisoformat(date)
+    start, end = (d - timedelta(days=1)).isoformat(), (d + timedelta(days=1)).isoformat()
+    data = FETCH_JSON(EONET_URL, {"start": start, "end": end, "status": "all",
+                                   "category": ",".join(_EONET_RADIUS_KM)})
+    here = AIRPORTS[airport]
+    found: List[SpaceSignal] = []
+    for ev in data.get("events", []):
+        cats = [c.get("id") for c in ev.get("categories", [])]
+        cat = next((c for c in cats if c in _EONET_RADIUS_KM), None)
+        if not cat:
+            continue
+        best = None
+        for lat, lon, when in _event_points(ev):
+            if not (start <= when <= end):
+                continue
+            km = _haversine_km(here, (lat, lon))
+            if km <= _EONET_RADIUS_KM[cat] and (best is None or km < best[0]):
+                best = (km, when)
+        if best:
+            found.append(SpaceSignal(
+                source="NASA EONET", kind=cat, where=airport,
+                detail=f"{ev.get('title', 'Natural event')} observed on {best[1]}",
+                distance_km=int(best[0])))
+    found.sort(key=lambda s: s.distance_km or 0)
+    return found[:3]
+
+
+def _kp_signal(date: str) -> Optional[SpaceSignal]:
+    rows = FETCH_JSON(KP_URL)
+    peak = None
+    for row in rows:
+        if isinstance(row, dict):
+            t, kp = str(row.get("time_tag", "")), row.get("Kp", row.get("kp"))
+        elif isinstance(row, list) and row and row[0] != "time_tag":
+            t, kp = str(row[0]), row[1]
+        else:
+            continue
+        try:
+            kp = float(kp)
+        except (TypeError, ValueError):
+            continue
+        if t[:10] == date and (peak is None or kp > peak):
+            peak = kp
+    if peak is not None and peak >= 5:
+        return SpaceSignal(source="NOAA SWPC", kind="geomagnetic_storm", where="global",
+                           detail=f"Planetary K-index reached {peak:g} (storm level) on {date}")
+    return None
+
+
+@app.post("/space-evidence", response_model=SpaceEvidenceOut, dependencies=[Depends(require_key)])
+def space_evidence(body: SpaceEvidenceIn) -> SpaceEvidenceOut:
+    """Satellite and space-weather context for a flight date. Read-only, never changes a verdict."""
+    for code in (body.departure_airport, body.arrival_airport):
+        if code not in AIRPORTS:
+            raise HTTPException(status_code=422, detail=f"Airport {code} is not in the demo list.")
+    try:
+        datetime.strptime(body.flight_date, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(status_code=422, detail="flight_date must be a real date, YYYY-MM-DD")
+
+    signals: List[SpaceSignal] = []
+    checked: List[str] = []
+    failed = 0
+    for code in dict.fromkeys((body.departure_airport, body.arrival_airport)):
+        try:
+            signals += _eonet_signals(code, body.flight_date)
+            checked.append(f"NASA EONET near {code}")
+        except Exception:
+            failed += 1
+    try:
+        kp = _kp_signal(body.flight_date)
+        checked.append("NOAA SWPC K-index")
+        if kp:
+            signals.append(kp)
+    except Exception:
+        failed += 1
+
+    if not checked:
+        status, summary = "unavailable", "Satellite data is unavailable right now. Your claim is not affected."
+    elif signals:
+        status = "partial" if failed else "signals_found"
+        summary = (f"Found {len(signals)} satellite or space-weather signal(s) around the flight date. "
+                   "The airline may cite these, but it must still prove they caused the delay.")
+    else:
+        status = "partial" if failed else "no_signals"
+        summary = "No major satellite-observed events near the airports or space-weather storms on that date."
+    return SpaceEvidenceOut(status=status, signals=signals, summary=summary,
+                            sources_checked=checked, disclaimer=SPACE_DISCLAIMER)
+
+
 @app.get("/cases/{case_id}", dependencies=[Depends(require_key)])
 def get_case(case_id: str) -> dict:
     case = CASES.get(case_id.upper())

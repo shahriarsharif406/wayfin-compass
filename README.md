@@ -21,6 +21,7 @@ Most hackathon bots answer FAQs. Compass is built around **guided workflows that
 | Safety | Refuses full card numbers, resists prompt injection, honest about limits |
 | Exact amounts | Airline compensation is calculated by tested code, never guessed by the model |
 | Modern API | Idempotency keys, optional API-key auth, strict validation, confirmation-email previews |
+| Evidence from space | Checks NASA satellite events and NOAA space weather near the airports on the flight date, as context for "extraordinary circumstances" (read-only, never changes the verdict) |
 | Business view | Live `/dashboard` with self-service rate, CSAT, and agent time saved |
 
 ## Repo map

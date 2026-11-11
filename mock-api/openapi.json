@@ -407,6 +407,63 @@
         }
       }
     },
+    "/space-evidence": {
+      "post": {
+        "summary": "Space Evidence",
+        "description": "Satellite and space-weather context for a flight date. Read-only, never changes a verdict.",
+        "operationId": "space_evidence_space_evidence_post",
+        "parameters": [
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpaceEvidenceIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceEvidenceOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/cases/{case_id}": {
       "get": {
         "summary": "Get Case",
@@ -1137,6 +1194,115 @@
           "confirmation_email"
         ],
         "title": "ReplacementOut"
+      },
+      "SpaceEvidenceIn": {
+        "properties": {
+          "departure_airport": {
+            "type": "string",
+            "maxLength": 3,
+            "minLength": 3,
+            "title": "Departure Airport",
+            "description": "IATA code, e.g. LHR"
+          },
+          "arrival_airport": {
+            "type": "string",
+            "maxLength": 3,
+            "minLength": 3,
+            "title": "Arrival Airport",
+            "description": "IATA code, e.g. JFK"
+          },
+          "flight_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Flight Date",
+            "description": "YYYY-MM-DD"
+          }
+        },
+        "type": "object",
+        "required": [
+          "departure_airport",
+          "arrival_airport",
+          "flight_date"
+        ],
+        "title": "SpaceEvidenceIn"
+      },
+      "SpaceEvidenceOut": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/SpaceSignal"
+            },
+            "type": "array",
+            "title": "Signals"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "sources_checked": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sources Checked"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "signals",
+          "summary",
+          "sources_checked",
+          "disclaimer"
+        ],
+        "title": "SpaceEvidenceOut"
+      },
+      "SpaceSignal": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "where": {
+            "type": "string",
+            "title": "Where"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "distance_km": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Distance Km"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source",
+          "kind",
+          "where",
+          "detail"
+        ],
+        "title": "SpaceSignal"
       },
       "ValidationError": {
         "properties": {

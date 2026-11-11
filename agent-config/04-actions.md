@@ -13,6 +13,7 @@ Contract file: `mock-api/openapi.json` (also live at `/docs` and `/openapi.json`
 | `get_case_status` | `GET /cases/{case_id}` | Workflow E | case_id | `status`, `priority`, `timeline`, `next_steps` |
 | `get_evidence_checklist` | `GET /evidence-checklist/{dispute_type}` | Workflow A | dispute_type | `documents` |
 | `estimate_airline_compensation` | `POST /airline-compensation/estimate` | Workflow B | distance_km, arrival_delay_minutes, cancelled, cancellation_notice_days, covered_route, intra_eu, reason | `verdict`, `indicative_amount_eur`, `reasons`, `disclaimer` |
+| `get_space_evidence` | `POST /space-evidence` | Workflow B | departure_airport, arrival_airport, flight_date | `status`, `signals`, `summary`, `disclaimer` |
 | `submit_feedback` | `POST /feedback` | Workflow F | rating (1 to 5), case_id, resolved_without_human, comment | `ok` |
 
 ## Modern API behaviour to rely on
@@ -22,6 +23,9 @@ Contract file: `mock-api/openapi.json` (also live at `/docs` and `/openapi.json`
 - **Card-number guard:** the API rejects free text that looks like a full card number (13 to 19 digits).
 - **Confirmation email preview:** responses include a preview object. Nothing is sent in the demo; production would hand it to an email service.
 - **Live business metrics:** `GET /metrics` and the page `GET /dashboard` show cases handled, self-service rate, CSAT, and estimated agent time saved.
+
+## Space evidence (satellite context)
+`POST /space-evidence` looks up NASA EONET (satellite-observed storms, volcanoes, wildfires, floods, dust near the two airports) and NOAA SWPC (geomagnetic storms) for the flight date. It is read-only: it never changes an estimate or verdict, it only gives the customer and the human agent extra context for "extraordinary circumstances" claims. Both sources are free and keyless. If either is down, the answer says `unavailable` and the rest of the flow continues. Agent wording: "Public satellite data shows X near Y on that date. This is context, not proof."
 
 ## Why amounts come from code
 The airline-compensation amount is calculated by a deterministic function, not by the language model. The agent reads the result back to the customer. This keeps euro figures exact and auditable, and the tests in `mock-api/test_app.py` lock the rules in.

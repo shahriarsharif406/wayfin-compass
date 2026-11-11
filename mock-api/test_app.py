@@ -174,3 +174,61 @@ def test_compensation_cancellation_notice():
 def test_compensation_extraordinary_reasons():
     assert comp(reason="weather")["verdict"] == "airline_may_be_exempt"
     assert comp(reason="technical_fault")["verdict"] == "likely_eligible"
+
+
+# ---- space evidence (network is faked, so tests never depend on NASA or NOAA) ----
+import app as app_module  # noqa: E402
+
+
+def _fake(events=None, kp=None, fail=False):
+    def fetch(url, params=None):
+        if fail:
+            raise RuntimeError("down")
+        if "eonet" in url:
+            return {"events": events or []}
+        return kp or []
+    return fetch
+
+
+STORM = {"title": "Tropical Storm Test", "categories": [{"id": "severeStorms"}],
+         "geometry": [{"type": "Point", "date": "2026-11-05T00:00:00Z", "coordinates": [-73.9, 40.7]}]}
+
+
+def space(**over):
+    body = {"departure_airport": "lhr", "arrival_airport": "JFK", "flight_date": "2026-11-05"}
+    body.update(over)
+    return client.post("/space-evidence", json=body)
+
+
+def test_space_storm_near_arrival_is_reported(monkeypatch):
+    monkeypatch.setattr(app_module, "FETCH_JSON", _fake(events=[STORM]))
+    b = space().json()
+    assert b["status"] == "signals_found"
+    assert b["signals"][0]["kind"] == "severeStorms"
+    assert b["signals"][0]["where"] == "JFK"
+    assert "not proof" in b["disclaimer"]
+
+
+def test_space_kp_storm_reported(monkeypatch):
+    kp = [{"time_tag": "2026-11-05T03:00:00", "Kp": 6.33}, {"time_tag": "2026-11-05T06:00:00", "Kp": 2.0}]
+    monkeypatch.setattr(app_module, "FETCH_JSON", _fake(kp=kp))
+    b = space(arrival_airport="LHR").json()
+    assert any(s["kind"] == "geomagnetic_storm" for s in b["signals"])
+
+
+def test_space_quiet_day_has_no_signals(monkeypatch):
+    monkeypatch.setattr(app_module, "FETCH_JSON", _fake())
+    assert space().json()["status"] == "no_signals"
+
+
+def test_space_source_down_degrades_gracefully(monkeypatch):
+    monkeypatch.setattr(app_module, "FETCH_JSON", _fake(fail=True))
+    r = space()
+    assert r.status_code == 200
+    assert r.json()["status"] == "unavailable"
+
+
+def test_space_unknown_airport_and_bad_date(monkeypatch):
+    monkeypatch.setattr(app_module, "FETCH_JSON", _fake())
+    assert space(departure_airport="ZZZ").status_code == 422
+    assert space(flight_date="2026-13-45").status_code == 422
