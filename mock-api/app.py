@@ -505,21 +505,19 @@ import httpx  # noqa: E402
 EONET_URL = "https://eonet.gsfc.nasa.gov/api/v3/events"
 KP_URL = "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json"
 
-# (lat, lon) for common airports. Unknown codes are rejected with a clear message.
-AIRPORTS: Dict[str, tuple] = {
-    "LHR": (51.47, -0.45), "CDG": (49.01, 2.55), "FRA": (50.04, 8.56), "AMS": (52.31, 4.76),
-    "MAD": (40.49, -3.57), "BCN": (41.30, 2.08), "FCO": (41.80, 12.25), "MXP": (45.63, 8.72),
-    "ZRH": (47.46, 8.55), "VIE": (48.11, 16.57), "CPH": (55.62, 12.65), "ARN": (59.65, 17.92),
-    "OSL": (60.19, 11.10), "HEL": (60.32, 24.96), "DUB": (53.43, -6.27), "LIS": (38.77, -9.13),
-    "ATH": (37.94, 23.94), "IST": (41.26, 28.74), "KEF": (63.99, -22.62), "CTA": (37.47, 15.07),
-    "JFK": (40.64, -73.78), "EWR": (40.69, -74.17), "LAX": (33.94, -118.41), "SFO": (37.62, -122.38),
-    "ORD": (41.98, -87.90), "MIA": (25.79, -80.29), "ATL": (33.64, -84.43), "DFW": (32.90, -97.04),
-    "SEA": (47.45, -122.31), "YYZ": (43.68, -79.63), "MEX": (19.44, -99.07), "GRU": (-23.43, -46.47),
-    "DXB": (25.25, 55.36), "DOH": (25.27, 51.61), "DEL": (28.56, 77.10), "BOM": (19.09, 72.87),
-    "DAC": (23.84, 90.40), "CGP": (22.25, 91.81), "SIN": (1.36, 103.99), "BKK": (13.69, 100.75),
-    "HKG": (22.31, 113.91), "NRT": (35.77, 140.39), "ICN": (37.47, 126.45), "SYD": (-33.95, 151.18),
-    "JNB": (-26.14, 28.25), "CAI": (30.12, 31.41), "CMB": (7.18, 79.88),
-}
+# Airports come from OurAirports (public domain, https://github.com/davidmegginson/ourairports-data):
+# about 3,200 airports with scheduled service and an IATA code. Unknown codes get a clear 422.
+def _load_airports() -> Dict[str, tuple]:
+    import csv
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "airports.csv")
+    out: Dict[str, tuple] = {}
+    with open(path, newline="", encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            out[row["iata"]] = (float(row["lat"]), float(row["lon"]))
+    return out
+
+
+AIRPORTS: Dict[str, tuple] = _load_airports()
 
 # category id -> search radius in km around the airport
 _EONET_RADIUS_KM = {"severeStorms": 600, "volcanoes": 800, "wildfires": 100,
@@ -638,7 +636,7 @@ def space_evidence(body: SpaceEvidenceIn) -> SpaceEvidenceOut:
     """Satellite and space-weather context for a flight date. Read-only, never changes a verdict."""
     for code in (body.departure_airport, body.arrival_airport):
         if code not in AIRPORTS:
-            raise HTTPException(status_code=422, detail=f"Airport {code} is not in the demo list.")
+            raise HTTPException(status_code=422, detail=f"Airport {code} is not a known airport code.")
     try:
         datetime.strptime(body.flight_date, "%Y-%m-%d")
     except ValueError:

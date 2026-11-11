@@ -19,3 +19,15 @@ A GitHub search (Nov 2026) found **no open-source project that combines card dis
 
 ## Caution
 The GitHub projects above are community code of varying quality, and EU261 summaries in any of them should be verified against the official regulation text before relying on them.
+
+## Data and ideas reused (second research pass)
+| Source | What we took | License |
+|---|---|---|
+| [OurAirports data](https://github.com/davidmegginson/ourairports-data) | About 3,200 airports with scheduled service and IATA codes (name, coordinates), stored as `mock-api/airports.csv`, used to find satellite events near each airport | Public domain |
+| NASA EONET (keyless API) | Satellite-observed storms, volcanoes, wildfires, floods and dust near an airport on the flight date | Open NASA data |
+| NOAA SWPC (keyless JSON) | Planetary K-index for geomagnetic storm days | Open US government data |
+
+## What we looked at and did not use (and why)
+- **OpenSky Network / pyopensky / traffic:** ADS-B flight tracks are open for research, but the live API states it does not provide delay or schedule data, is non-commercial, and may block cloud hosts. Too fragile for a one-minute demo.
+- **Commercial EU261 checkers (AirHelp and similar):** they apply the same distance and delay bands we do. None of those we found shows satellite or space-weather context for the "extraordinary circumstances" question, which is the gap Evidence from Space fills.
+- **Space-weather aviation advisories (ICAO, NOAA SWPC):** real impact is mostly on polar and transoceanic HF radio and satellite navigation, so a high K-index is a weak signal on its own. We label it as context, never proof. A possible later step is reading the official ICAO advisory feed.
