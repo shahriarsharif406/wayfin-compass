@@ -8,8 +8,8 @@
 | 0:06 to 0:14 | Fill the pre-chat form: issue = unrecognized charge, style = **Simple & short** | "Before chatting, Compass asks what's wrong and how you like replies, so you never repeat yourself." |
 | 0:14 to 0:24 | Type: "How long do I have to dispute a charge?" Show the short-sentence answer | "Answers come only from Wayfin's own content, in short sentences when you choose Simple mode." |
 | 0:24 to 0:42 | Click "I was charged twice". Answer the pending question, merchant, amount. Show the evidence checklist, then "Open case" and the case number | "Now a guided workflow. It finds the dispute type, checks the 60-day window, lists the proof you need, and opens a real case." |
-| 0:42 to 0:50 | Type: "My flight was cancelled". Show the result screen with Wayfin cover and general airline-rights info | "Flight cancelled? Compass shows your card cover and your general airline rights, then files the claim." |
-| 0:50 to 0:57 | Type: "Can I get a loan?" Show the honest "I don't have that" and the phone/email options with the summary | "When it doesn't know, it says so and hands over to a person with the full story." |
+| 0:42 to 0:52 | Type: "My flight LHR to JFK on 5 Nov was cancelled". Show the claim result and the **Evidence from Space** line (NASA satellite event near the airport, or "no major events") | "Flight cancelled? Compass shows your card cover, your airline rights, and satellite evidence from NASA and NOAA for what the airline may claim." |
+| 0:52 to 0:57 | Type: "Can I get a loan?" Show the honest "I don't have that" and the phone/email options with the summary | "When it doesn't know, it says so and hands over to a person with the full story." |
 | 0:57 to 1:00 | End card with demo link | "Wayfin Compass: fewer dispute calls, calmer customers." |
 
 ## Recording tips
