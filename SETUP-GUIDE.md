@@ -37,7 +37,7 @@ Build Workflows A to F and the global rules from `agent-config/03-workflows.md`.
 ## Step 5: Deploy the actions API (20 min)
 Option 1: Render (free)
 1. Push this repo to GitHub.
-2. In Render, create a **Web Service** from the repo. It reads `mock-api/render.yaml`.
+2. In Render, create a **Web Service** from the repo. It reads `render.yaml` at the repo root.
 3. Open `https://YOUR-SERVICE.onrender.com/docs` to confirm the API is live.
 4. Free instances sleep when idle, so open `/health` a minute before recording or judging.
 5. (Recommended) In Render's Environment settings add `WAYFIN_API_KEY` with a long random value, then add the header `X-API-Key` with the same value in the eGain action settings. Do not commit the key to GitHub.
